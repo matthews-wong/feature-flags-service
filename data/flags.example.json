@@ -1,0 +1,36 @@
+{
+  "flags": [
+    {
+      "key": "new-dashboard",
+      "enabled": true,
+      "rollout_percentage": 100,
+      "rules": [],
+      "description": "Fully released to all users."
+    },
+    {
+      "key": "beta-search",
+      "enabled": true,
+      "rollout_percentage": 25,
+      "rules": [
+        { "attribute": "plan", "operator": "eq", "value": "internal" }
+      ],
+      "description": "25% rollout, plus always on for internal users."
+    },
+    {
+      "key": "eu-pricing",
+      "enabled": true,
+      "rollout_percentage": 0,
+      "rules": [
+        { "attribute": "country", "operator": "in", "value": ["DE", "FR", "NL"] }
+      ],
+      "description": "Targeted only: EU countries get the new pricing."
+    },
+    {
+      "key": "legacy-export",
+      "enabled": false,
+      "rollout_percentage": 100,
+      "rules": [],
+      "description": "Kill switch: disabled for everyone."
+    }
+  ]
+}
