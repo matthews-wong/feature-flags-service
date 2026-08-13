@@ -36,14 +36,23 @@ class FeatureFlagsClient:
         return resp.json()
 
     def is_enabled(
-        self, flag: str, user: str, **attributes: Any
+        self, flag: str, user: str, *, default: bool = False, **attributes: Any
     ) -> bool:
         """Return whether ``flag`` is ON for ``user``.
 
         Extra keyword arguments are passed as targeting attributes, e.g.
         ``is_enabled("beta", user="u1", plan="pro")``.
+
+        Fails safe: if the flag is unknown (404) or the service is
+        unreachable/erroring, return ``default`` (False unless overridden)
+        instead of raising. A flag-plane problem must never take down the
+        caller. Use :meth:`evaluate` when you need errors to surface.
         """
-        return bool(self.evaluate(flag, user, attributes).get("enabled", False))
+        try:
+            result = self.evaluate(flag, user, attributes)
+        except httpx.HTTPError:
+            return default
+        return bool(result.get("enabled", default))
 
     def close(self) -> None:
         """Close the underlying HTTP connection pool."""

@@ -114,6 +114,11 @@ with FeatureFlagsClient("http://localhost:8000") as client:
     result = client.evaluate("beta-search", user="user-123")
 ```
 
+`is_enabled` **fails safe**: if the flag is unknown or the service is
+unreachable it returns `default` (which is `False` unless you pass
+`default=True`) rather than raising, so a flag-plane problem never takes down
+the caller. Use `evaluate` when you want errors to surface instead.
+
 ## Evaluation rules
 
 A flag is evaluated in this precedence order (see `featureflags/engine.py`):

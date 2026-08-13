@@ -48,3 +48,14 @@ def test_sdk_evaluate_returns_full_payload(sdk):
     assert result["flag"] == "beta"
     assert result["enabled"] is True
     assert result["reason"] == "targeting"
+
+
+def test_sdk_is_enabled_unknown_flag_fails_safe_to_default(sdk):
+    """An unknown flag (or an unreachable service) must not raise.
+
+    A feature-flag SDK exists so that flag-plane problems degrade gracefully:
+    a typo'd or not-yet-created flag should behave as "feature off", never
+    crash the calling code path. The default is overridable per call.
+    """
+    assert sdk.is_enabled("never-created", user="u1") is False
+    assert sdk.is_enabled("never-created", user="u1", default=True) is True
